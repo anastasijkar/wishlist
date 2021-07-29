@@ -1,0 +1,7 @@
+enum WISH_STATUSES {
+  AVAILABLE = 'AVAILABLE',
+  TAKEN = 'TAKEN',
+  ARCHIVED = 'ARCHIVED'
+}
+
+export default WISH_STATUSES;

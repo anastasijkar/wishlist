@@ -1,0 +1,31 @@
+@import '~antd/dist/antd.css';
+
+.layout {
+  min-height: 100vh;
+}
+
+.site-layout-content {
+  padding: 24px;
+  background: #fff;
+  min-height: calc(100vh - 134px);
+}
+
+.fill {
+  width: 100%;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.floating-button {
+  position: fixed;
+  
+  &.top {
+    top: 90px;
+  }
+
+  &.right {
+    right: 100px;
+  }
+}
