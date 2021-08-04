@@ -174,7 +174,7 @@ const AddWish: FC = () => {
               icon={addLoading ? <LoadingOutlined /> : undefined}
             >
               Submit
-        </Button>
+            </Button>
           </Form.Item>
         </Form>
       </Space>
