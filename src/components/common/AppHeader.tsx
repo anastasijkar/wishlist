@@ -3,7 +3,6 @@ import {
   Link
 } from "react-router-dom";
 
-
 import { Layout, Menu, Avatar } from 'antd';
 
 import { HomeOutlined, GiftOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';

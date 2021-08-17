@@ -1,7 +1,10 @@
 import React, { FC, useState, useCallback } from 'react';
 import PropTypes from 'prop-types'
 
-import { Card, Avatar, Popover, Button, Skeleton } from 'antd';
+import { FirebaseTimestamp } from '../../firebase';
+import { firebaseTimestampToDate } from '../../utils/firebaseTimestamp';
+
+import { Card, Avatar, Popover, Button, Skeleton, Tag } from 'antd';
 import { EditOutlined, EllipsisOutlined, ShareAltOutlined, UserAddOutlined, DeleteOutlined, FileZipOutlined, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
 
 import './Wish.scss'
@@ -14,12 +17,14 @@ const propTypes = {
   description: PropTypes.string,
   image: PropTypes.string,
   avatarUrl: PropTypes.string,
-  isFavorite: PropTypes.bool
+  isFavorite: PropTypes.bool,
+  tags: PropTypes.arrayOf(PropTypes.string),
+  dueDate: PropTypes.instanceOf(FirebaseTimestamp)
 };
 
 type WishProps = PropTypes.InferProps<typeof propTypes>;
 
-const Wish: FC<WishProps> = ({ title, description, image, avatarUrl, isOwn, isFavorite }) => {
+const Wish: FC<WishProps> = ({ title, description, image, avatarUrl, isOwn, isFavorite, tags, dueDate }) => {
 
   // TO FIX: add/update data from store
   const [localFavorite, setLocalFavorite] = useState(isFavorite);
@@ -39,6 +44,10 @@ const Wish: FC<WishProps> = ({ title, description, image, avatarUrl, isOwn, isFa
 
   const favoriteButton = localFavorite ? <HeartTwoTone twoToneColor="#ff7875" onClick={toggleFavorite} key="favorite" /> : <HeartOutlined onClick={toggleFavorite} key="favorite" />;
 
+  const tagsList = tags ? tags.map((tag: string | null | undefined, index: number) => tag ? <Tag key={index}>{tag}</Tag> : '') : '';
+
+  const isExpired: boolean = !!(dueDate && firebaseTimestampToDate(dueDate) < new Date());
+
   const actions = [
     <ShareAltOutlined key="share" />,
     isOwn ? <EditOutlined key="edit" /> : <UserAddOutlined key="take" />,
@@ -49,12 +58,12 @@ const Wish: FC<WishProps> = ({ title, description, image, avatarUrl, isOwn, isFa
     </Popover> : favoriteButton
   ]
 
-  const avatar = avatarUrl ? <Avatar src={avatarUrl} /> : <Skeleton.Avatar />;
+  const avatar = isOwn ? undefined : avatarUrl ? <Avatar src={avatarUrl} /> : <Skeleton.Avatar />;
 
   return (
     <Card
       className="wish"
-      style={{ width: 300 }}
+      style={{ width: 300, opacity: isExpired ? 0.5 : 1 }}
       cover={image ?
         <img
           alt={title}
@@ -64,10 +73,12 @@ const Wish: FC<WishProps> = ({ title, description, image, avatarUrl, isOwn, isFa
       actions={actions}
     >
       <Meta
-        avatar={isOwn && avatar}
+        avatar={avatar}
         title={title}
         description={description}
+        style={{ marginBottom: '15px' }}
       />
+      {tagsList}
     </Card>
   );
 }
@@ -79,7 +90,9 @@ Wish.defaultProps = {
   description: '',
   image: '',
   avatarUrl: '',
-  isFavorite: false
+  isFavorite: false,
+  tags: [],
+  dueDate: null
 }
 
 export default Wish;

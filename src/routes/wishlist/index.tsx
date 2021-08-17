@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useMemo } from 'react';
+import React, { FC, useState, useEffect, useCallback } from 'react';
 import { RouteComponentProps, Redirect } from "react-router-dom";
 
 import { Space, Button, Tooltip } from 'antd';
@@ -6,12 +6,14 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { green } from '@ant-design/colors';
 
 import Wish from '../../components/Wish/Wish';
+import WishWithWrapper from '../../components/Wish/WishWithWrapper';
 
 import { fetchWishlist } from '../../features/wishlist/wishlistAPI';
 
 import IWish from '../../interfaces/wish.interface';
 import { useAppSelector } from '../../app/hooks';
 import { selectUID } from '../../features/user/userSlice';
+import WishFilter from '../../components/WishFilter/WishFilter';
 
 interface RouteParams {
   uid: string | undefined
@@ -41,12 +43,16 @@ const WishList: FC<RouteComponentProps<RouteParams>> = (props) => {
   }, [ownUID])
 
   const wishArray = wishlistData && wishlistData.length ? wishlistData.map((wish: IWish) => {
-    return <Wish
-      key={wish.id}
-      title={wish.title}
-      description={wish.description}
-      image={wish.images && wish.images.length ? wish.images[0] : null}
-      isOwn={true} />
+    return (
+      <WishWithWrapper dueDate={wish.dueDate} key={wish.id}>
+        <Wish
+          title={wish.title}
+          description={wish.description}
+          image={wish.images && wish.images.length ? wish.images[0] : null}
+          tags={wish.tags || []}
+          isOwn={true}
+          dueDate={wish.dueDate} />
+      </WishWithWrapper>)
   }) : [];
 
   const addNewWish = () => {
@@ -60,14 +66,15 @@ const WishList: FC<RouteComponentProps<RouteParams>> = (props) => {
         {loading && <LoadingOutlined />}
         {(wishlistData && wishlistData.length)
           ? (<div>
+            <WishFilter />
             <Space size={[30, 45]} wrap align="start">
               {wishArray}
             </Space>
           </div>)
           : (!loading && <p>Nothing is there</p>)}
-        <Tooltip placement="left" color={green[3]} title="Add a new Wish">
+        <Tooltip placement="left" color={green[4]} title="Add a new Wish">
           <Button
-            className="floating-button top right"
+            className="floating-button bottom right"
             type="primary"
             shape="circle"
             icon={<PlusOutlined />}

@@ -13,7 +13,7 @@ import SURPRISE_SETTINGS from '../../enums/surpriseSettings.enum';
 import WISH_STATUSES from '../../enums/wishStatuses.enum';
 
 import WishGenerator from '../../utils/wish.generator';
-import formatFirebaseTimestamp from '../../utils/firebaseTimestamp';
+import { formatFirebaseTimestamp } from '../../utils/firebaseTimestamp';
 
 import IWish from '../../interfaces/wish.interface';
 

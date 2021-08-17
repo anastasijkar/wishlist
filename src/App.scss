@@ -25,7 +25,19 @@
     top: 90px;
   }
 
+  &.bottom {
+    bottom: 60px;
+  }
+
   &.right {
-    right: 100px;
+    right: 30px;
+
+    &.middle {
+      right: 35px;
+    }
+  }
+
+  &.left {
+    left: 30px;
   }
 }
