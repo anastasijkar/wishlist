@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from 'react';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types'
 
 import { Radio, RadioChangeEvent, Tooltip, Button, Badge } from 'antd';
@@ -9,9 +9,22 @@ import { geekblue } from '@ant-design/colors';
 
 import './WishFilter.scss';
 
-const WishFilter: FC = () => {
-  const [sortValue, setSortValue] = useState('none');
+import ICollectionSortingParams from '../../interfaces/api/collectionSortingParams.interface';
+import Checkbox, { CheckboxChangeEvent } from 'antd/lib/checkbox/Checkbox';
+import ICollectionFilterParam from '../../interfaces/api/collectionFilterParam.interface';
+
+import { format } from 'date-fns';
+
+const propTypes = {
+  applyFilterSort: PropTypes.func.isRequired
+};
+
+type WishFilterProps = PropTypes.InferProps<typeof propTypes>;
+
+const WishFilter: FC<WishFilterProps> = ({ applyFilterSort }) => {
   const [show, setShow] = useState<boolean>(false);
+  const [sortValue, setSortValue] = useState('none');
+  const [showExpired, setShowExpired] = useState(true);
 
   const toggleFilters = useCallback(() => {
     setShow(!show)
@@ -19,6 +32,30 @@ const WishFilter: FC = () => {
 
   const handleSortChange = (e: RadioChangeEvent) => {
     setSortValue(e.target.value);
+  };
+
+  const handleShowExpiredChange = (e: CheckboxChangeEvent) => {
+    setShowExpired(e.target.checked);
+  }
+
+  useEffect(() => {
+    apply()
+  }, [sortValue, showExpired])
+
+  const apply = () => {
+    const sortParams: ICollectionSortingParams | undefined = sortValue !== 'none' ? {
+      fieldName: sortValue.slice(1),
+      descending: !!(sortValue[0] === '-')
+    } : undefined
+    let filterParams: ICollectionFilterParam[] = [];
+    if (!showExpired) {
+      filterParams.push({
+        fieldPath: 'dueDate',
+        opStr: '>',
+        value: +format(new Date(), 'T')
+      })
+    }
+    applyFilterSort(sortParams, filterParams);
   };
 
   return (
@@ -35,22 +72,22 @@ const WishFilter: FC = () => {
         />
       </Tooltip>
       <div className={`wish-filter ${show ? 'visible' : ''}`}>
-        <div className="wish-filter__sort">
+        <div className="wish-filter--row wish-filter__sort">
           <strong>Sort:</strong>
           <Radio.Group value={sortValue} onChange={handleSortChange}>
             <Radio.Button value="none">None</Radio.Button>
-            <Radio.Button value="title-desc">Title (A-Z)</Radio.Button>
-            <Radio.Button value="title-asc">Title (Z-A)</Radio.Button>
-            <Radio.Button value="dueDate-desc">Expiration date (sooner-later)</Radio.Button>
+            <Radio.Button value="+title">Title (A-Z)</Radio.Button>
+            <Radio.Button value="-title">Title (Z-A)</Radio.Button>
+            <Radio.Button value="+dueDate">Expiration date (sooner first)</Radio.Button>
+            <Radio.Button value="-dueDate">Expiration date (later first)</Radio.Button>
           </Radio.Group>
+        </div>
+        <div className="wish-filter--row">
+          <Checkbox checked={showExpired} onChange={handleShowExpiredChange}>Show expired wishes</Checkbox>
         </div>
       </div>
     </>
   );
-}
-
-WishFilter.defaultProps = {
-  show: false
 }
 
 export default WishFilter;

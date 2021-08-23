@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import PropTypes from 'prop-types'
 
-import formatDistance from 'date-fns/formatDistance';
+import { format, formatDistanceToNow } from 'date-fns'
 
 import { Badge } from 'antd';
 
@@ -9,24 +9,21 @@ import { blue, volcano } from '@ant-design/colors';
 
 import './WishWithWrapper.scss';
 
-import { FirebaseTimestamp } from '../../firebase';
-import { firebaseTimestampToDate } from '../../utils/firebaseTimestamp';
-
 const propTypes = {
   children: PropTypes.element.isRequired,
-  dueDate: PropTypes.instanceOf(FirebaseTimestamp)
+  dueDate: PropTypes.number
 };
 
 type WrapperProps = PropTypes.InferProps<typeof propTypes>;
 
 const WishWithWrapper: FC<WrapperProps> = ({ children, dueDate }) => {
 
-  const today: Date = new Date();
-  const expirationDate: Date | null = dueDate ? firebaseTimestampToDate(dueDate) : null;
+  const today: number = +format(new Date(), 'T');
+  const expirationDate: number | null = dueDate && dueDate !== Number.POSITIVE_INFINITY ? dueDate : null;
   const isExpired: boolean = expirationDate ? expirationDate < today : false;
-  const expirationText: string | null = expirationDate ? `${isExpired ? 'expired' : 'expires'} ${formatDistance(expirationDate, today, { addSuffix: true })}` : null;
+  const expirationText: string | null = expirationDate ? `${isExpired ? 'expired' : 'expires'} ${formatDistanceToNow(expirationDate, { addSuffix: true })}` : null;
 
-  return dueDate
+  return expirationDate
     ? <Badge.Ribbon className={isExpired ? 'expired' : ''} text={expirationText || ''} color={isExpired ? volcano[2] : blue[0]}>
       {children}
     </Badge.Ribbon>
@@ -34,7 +31,7 @@ const WishWithWrapper: FC<WrapperProps> = ({ children, dueDate }) => {
 }
 
 WishWithWrapper.defaultProps = {
-  dueDate: null
+  dueDate: Number.POSITIVE_INFINITY
 }
 
 export default WishWithWrapper;

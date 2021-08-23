@@ -14,6 +14,8 @@ import IWish from '../../interfaces/wish.interface';
 import { useAppSelector } from '../../app/hooks';
 import { selectUID } from '../../features/user/userSlice';
 import WishFilter from '../../components/WishFilter/WishFilter';
+import ICollectionSortingParams from '../../interfaces/api/collectionSortingParams.interface';
+import ICollectionFilterParam from '../../interfaces/api/collectionFilterParam.interface';
 
 interface RouteParams {
   uid: string | undefined
@@ -26,10 +28,11 @@ const WishList: FC<RouteComponentProps<RouteParams>> = (props) => {
 
   const ownUID = useAppSelector(selectUID);
 
-  const fetchList = async () => {
+  const fetchList = async (sort?: ICollectionSortingParams, filter?: ICollectionFilterParam[]) => {
+    console.log(sort)
     if (ownUID) {
       setLoading(true);
-      const wishlist = await fetchWishlist(ownUID);
+      const wishlist = await fetchWishlist(ownUID, { sort, filter });
       console.log(wishlist)
       if (wishlist) {
         setWishlistData(wishlist);
@@ -41,6 +44,10 @@ const WishList: FC<RouteComponentProps<RouteParams>> = (props) => {
   useEffect(() => {
     fetchList();
   }, [ownUID])
+
+  const applyFilterSort = (sort?: ICollectionSortingParams, filter?: ICollectionFilterParam[]) => {
+    fetchList(sort, filter);
+  }
 
   const wishArray = wishlistData && wishlistData.length ? wishlistData.map((wish: IWish) => {
     return (
@@ -63,10 +70,10 @@ const WishList: FC<RouteComponentProps<RouteParams>> = (props) => {
     redirectToAdd
       ? <Redirect to="/wish/add" />
       : <section className="wishlist">
+        {(wishlistData && wishlistData.length) ? <WishFilter applyFilterSort={applyFilterSort} /> : ''}
         {loading && <LoadingOutlined />}
         {(wishlistData && wishlistData.length)
           ? (<div>
-            <WishFilter />
             <Space size={[30, 45]} wrap align="start">
               {wishArray}
             </Space>

@@ -4,6 +4,8 @@ import IUser from '../../interfaces/user.interface';
 
 import NOTIFICATION_TYPES from '../../enums/notificationTypes.enum';
 
+import { format } from 'date-fns';
+
 export const getUser = async (authData: firebase.User) => {
   try {
     const docRef = db.collection('Users').doc(authData.uid);
@@ -28,7 +30,7 @@ export const addUser = async (authData: firebase.User) => {
     await db.collection("UserNotifications").doc(authId).collection('notifications').add({
       type: NOTIFICATION_TYPES.OTHER,
       text: 'You joined Wishlist 🎉',
-      time: Date.now(),
+      time: +format(new Date(), 'T'),
       read: false
     })
     return {

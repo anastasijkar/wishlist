@@ -1,11 +1,10 @@
 import React, { FC, useState, useCallback } from 'react';
 import PropTypes from 'prop-types'
 
-import { FirebaseTimestamp } from '../../firebase';
-import { firebaseTimestampToDate } from '../../utils/firebaseTimestamp';
-
 import { Card, Avatar, Popover, Button, Skeleton, Tag } from 'antd';
 import { EditOutlined, EllipsisOutlined, ShareAltOutlined, UserAddOutlined, DeleteOutlined, FileZipOutlined, HeartOutlined, HeartTwoTone } from '@ant-design/icons';
+
+import { format } from 'date-fns'
 
 import './Wish.scss'
 
@@ -19,7 +18,7 @@ const propTypes = {
   avatarUrl: PropTypes.string,
   isFavorite: PropTypes.bool,
   tags: PropTypes.arrayOf(PropTypes.string),
-  dueDate: PropTypes.instanceOf(FirebaseTimestamp)
+  dueDate: PropTypes.number
 };
 
 type WishProps = PropTypes.InferProps<typeof propTypes>;
@@ -46,7 +45,11 @@ const Wish: FC<WishProps> = ({ title, description, image, avatarUrl, isOwn, isFa
 
   const tagsList = tags ? tags.map((tag: string | null | undefined, index: number) => tag ? <Tag key={index}>{tag}</Tag> : '') : '';
 
-  const isExpired: boolean = !!(dueDate && firebaseTimestampToDate(dueDate) < new Date());
+  const isExpired: boolean = !!(
+    dueDate
+    && dueDate !== Number.POSITIVE_INFINITY
+    && dueDate < +format(new Date(), 'T')
+  );
 
   const actions = [
     <ShareAltOutlined key="share" />,

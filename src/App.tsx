@@ -20,7 +20,7 @@ import { useAppDispatch } from './app/hooks';
 import { fetchNotitications } from './features/notifications/notificationsSlice';
 import { fetchUser, setUID } from './features/user/userSlice';
 
-import { Layout, /*Breadcrumb*/ } from 'antd';
+import { Layout } from 'antd';
 
 import './App.scss';
 
@@ -33,7 +33,6 @@ const App: FC = () => {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('onAuthStateChanged: ', user)
       if (user) {
         dispatch(setUID(user.uid))
         dispatch(fetchUser(user))
@@ -51,9 +50,6 @@ const App: FC = () => {
           {redirectToLogin && <Redirect to="/login"></Redirect>}
           <AppHeader />
           <Content style={{ padding: '0 50px' }}>
-            {/*<Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              </Breadcrumb>*/}
             <div className="site-layout-content">
               <Switch>
                 <Route exact path="/" component={Dashboard} />

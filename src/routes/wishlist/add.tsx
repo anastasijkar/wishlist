@@ -13,11 +13,11 @@ import SURPRISE_SETTINGS from '../../enums/surpriseSettings.enum';
 import WISH_STATUSES from '../../enums/wishStatuses.enum';
 
 import WishGenerator from '../../utils/wish.generator';
-import { formatFirebaseTimestamp } from '../../utils/firebaseTimestamp';
 
 import IWish from '../../interfaces/wish.interface';
 
 import './add.scss';
+import { format } from 'date-fns';
 
 const { Title } = Typography;
 
@@ -62,7 +62,7 @@ const AddWish: FC = () => {
         description: values.description,
         images: values.images && values.images.length ? values.images.filter((image: string) => !!image) : null,
         tags: values.tags,
-        dueDate: values.dueDate ? formatFirebaseTimestamp(values.dueDate.toDate()) : null,
+        dueDate: values.dueDate ? +format(values.dueDate.toDate(), 'T') : Number.POSITIVE_INFINITY,
         taken: false,
         status: WISH_STATUSES.AVAILABLE,
         surpriseSetting: values.surpriseSetting,

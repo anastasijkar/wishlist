@@ -9,7 +9,7 @@ import { grey } from '@ant-design/colors';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Badge, Card } from 'antd';
 
-import formatDistance from 'date-fns/formatDistance'
+import { format, formatDistanceToNow } from 'date-fns'
 
 import './Notifications.scss'
 
@@ -22,7 +22,7 @@ const Notifications: FC = () => {
     return (
       notification.time
         ?
-        <Badge.Ribbon key={notification.id} text={formatDistance(notification.time, new Date(), { addSuffix: true, includeSeconds: true })} color={grey[2]}>
+        <Badge.Ribbon key={notification.id} text={formatDistanceToNow(+format(notification.time, 'T'), { addSuffix: true, includeSeconds: true })} color={grey[2]}>
           <Card className="notification">{notification.text}</Card>
         </Badge.Ribbon>
         :

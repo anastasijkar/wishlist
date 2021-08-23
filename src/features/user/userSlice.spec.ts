@@ -6,7 +6,7 @@ import userReducer, {
   clearUser
 } from './userSlice';
 
-describe('counter reducer', () => {
+describe('User reducer', () => {
   const initialState: UserState = {
     uid: null,
     userData: null,

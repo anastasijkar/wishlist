@@ -16,5 +16,3 @@ firebase.initializeApp(config);
 export default firebase;
 
 export const db = firebase.firestore(firebase.apps[0]);
-
-export class FirebaseTimestamp extends firebase.firestore.Timestamp { };

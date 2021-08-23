@@ -13,7 +13,7 @@ export default class WishGenerator {
       description: wishData.description || '',
       images: wishData.images || null,
       tags: wishData.tags || null,
-      dueDate: wishData.dueDate || null,
+      dueDate: wishData.dueDate || Number.POSITIVE_INFINITY,
       taken: wishData.taken,
       status: wishData.status,
       surpriseSetting: wishData.surpriseSetting,

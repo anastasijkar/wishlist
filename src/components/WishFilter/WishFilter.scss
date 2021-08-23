@@ -13,4 +13,13 @@
     height: auto;
     transform: scale(1);
   }
+
+  &--row {
+    margin-bottom: 10px;
+  }
+
+  &__submit {
+    margin-top: 15px;
+    text-align: right;
+  }
 }
